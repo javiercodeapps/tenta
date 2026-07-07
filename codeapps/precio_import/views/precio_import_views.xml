@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- SECUENCIA -->
+    <data noupdate="1">
+        <record id="seq_precio_export" model="ir.sequence">
+            <field name="name">Precio Export</field>
+            <field name="code">precio.export</field>
+            <field name="prefix">EXP-</field>
+            <field name="padding">4</field>
+        </record>
+    </data>
+
+    <!-- ==================== FORMULARIO EXPORTACION ==================== -->
+    <record id="view_precio_export_form" model="ir.ui.view">
+        <field name="name">precio.export.form</field>
+        <field name="model">precio.export</field>
+        <field name="arch" type="xml">
+            <form string="Exportar Precios">
+                <header>
+                    <button name="action_generate" string="Generar TXT"
+                            type="object" class="oe_highlight"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <field name="fecha" readonly="1"/>
+                    </group>
+                    <group>
+                        <field name="archivo_txt" readonly="1"
+                               placeholder="Presione 'Generar TXT' para crear el archivo..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_precio_export_tree" model="ir.ui.view">
+        <field name="name">precio.export.tree</field>
+        <field name="model">precio.export</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="fecha"/>
+                <field name="create_date" string="Creado"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_precio_export" model="ir.actions.act_window">
+        <field name="name">Exportar Precios</field>
+        <field name="res_model">precio.export</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ==================== WIZARD IMPORTACION ==================== -->
+    <record id="view_import_precio_wizard_form" model="ir.ui.view">
+        <field name="name">import.precio.wizard.form</field>
+        <field name="model">import.precio.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Importar Precios desde Excel">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>Importar Precios</h1>
+                    </div>
+                    <p class="oe_grey">
+                        Seleccione un archivo Excel (.xlsx) con las columnas:
+                        <b>Codigo</b>, <b>Descripcion</b>, <b>Precio</b>.
+                        La primera fila debe contener los encabezados.
+                    </p>
+                    <group>
+                        <field name="file_xls" filename="file_xls_name"/>
+                        <field name="file_xls_name" invisible="1"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_import" string="Importar Precios"
+                            type="object" class="oe_highlight"/>
+                    <button string="Cancelar" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_import_precio_wizard" model="ir.actions.act_window">
+        <field name="name">Importar Precios</field>
+        <field name="res_model">import.precio.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- ==================== MENUS ==================== -->
+    <menuitem id="menu_precio_import_import"
+              name="Importar Precios"
+              parent="sale.product_menu_catalog"
+              action="action_import_precio_wizard"
+              sequence="90"/>
+
+    <menuitem id="menu_precio_import_export"
+              name="Exportar Precios"
+              parent="sale.product_menu_catalog"
+              action="action_precio_export"
+              sequence="100"/>
+
+</odoo>

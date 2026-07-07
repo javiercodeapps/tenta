@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_account_cashbox" name="Cashbox management" parent="fresherp_ventas.menu_fresherp_ventas_root" action="account_cashbox_settings_action" sequence="200" />
+</odoo>

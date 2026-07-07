@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherited sale order form view. -->
+    <record id="view_order_form" model="ir.ui.view">
+        <field name="name">sales.order.view.form.inherit.payment.status.in
+            .sale
+        </field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='payment_term_id']" position="after">
+                <field name="payment_status" invisible="1"/>
+                <field name="invoice_state" invisible="1"/>
+                <field name="payment_details" widget="payment"
+                       style="width: 60%"/>
+                <field name="amount_due"/>
+            </xpath>
+            <xpath expr="//sheet//div[hasclass('oe_button_box')]"
+                   position="after">
+                <widget name="web_ribbon" title="Pago Pendiente"
+                        bg_color="bg-danger" invisible = "payment_status == 'Pago Pendiente'"/>
+                <widget name="web_ribbon" title="Pagado"
+                        bg_color="bg-success" invisible = "payment_status ==  'Pagado'"/>
+                <widget name="web_ribbon" title="Pago Parcial"
+                        bg_color="bg-warning" invisible = "payment_status ==  'Pago Parcial'"/>
+                <widget name="web_ribbon" title="En proceso de pago"
+                        bg_color="bg-info" invisible = "payment_status ==  'En proceso de pago'"/>
+                <widget name="web_ribbon" title="Revertido"
+                        bg_color="bg-success" invisible = "payment_status == 'Revertido'"/>
+            </xpath>
+            <xpath expr="//button[@name='action_confirm']"
+                   position="after">
+                <button name="action_register_payment"
+                        string="Register Payment" class="btn-secondary"
+                        type="object" invisible = "state != 'sale' or invoice_state != 'posted' or payment_status not in ('Pago Pendiente', 'Pago Parcial')"/>
+            </xpath>
+        </field>
+    </record>
+    <!-- Inherited sale order tree view. -->
+    <record id="view_order_tree" model="ir.ui.view">
+        <field name="name">sale.order.view.tree.inherit.payment.status.in
+            .sale
+        </field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='invoice_status']" position="after">
+                <field name="payment_status" optional="show"
+                       decoration-success="payment_status in ['Pagado', 'Revertido']"
+                       decoration-danger="payment_status == 'Pago Pendiente'"
+                       decoration-info="payment_status == 'En proceso de pago'"
+                       decoration-bf="payment_status == 'No invoice'"
+                       decoration-warning="payment_status == 'Partially Paid'"
+                       widget="badge"/>
+            </xpath>
+        </field>
+    </record>
+    <!-- Inherited sale order quotation tree view. -->
+    <record id="view_quotation_tree_with_onboarding" model="ir.ui.view">
+        <field name="name">sale.order.view.tree.inherit.payment.status
+            .in.sale
+        </field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id"
+               ref="sale.view_quotation_tree_with_onboarding"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='invoice_status']" position="after">
+                <field name="payment_status" optional="show"
+                       decoration-success="payment_status in ['Paid', 'Reversed']"
+                       decoration-danger="payment_status == 'Not Paid'"
+                       decoration-info="payment_status == 'In Payment'"
+                       decoration-bf="payment_status == 'No invoice'"
+                       decoration-warning="payment_status in ['Partially Paid','Sin Procesar']"
+                       widget="badge"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

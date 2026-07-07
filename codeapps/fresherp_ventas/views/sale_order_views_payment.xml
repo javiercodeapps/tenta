@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherited sale order form view. -->
+    <record id="view_order_form" model="ir.ui.view">
+        <field name="name">sales.order.view.form.inherit.payment.status.in.sale</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="fresherp_ventas.view_fresherp_ventas"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='sale_discounts']" position="after">
+                <field name="invoice_state" invisible="1"/>
+                <field name="is_ctacte" invisible="1"/>
+                <field name="payment_status" invisible="1"/>
+                <field name="payment_details" widget="payment"
+                       style="width: 60%"/>
+                <field name="amount_due"/>
+            </xpath>
+            <xpath expr="//sheet//div[hasclass('oe_button_box')]" position="before">
+                <center>
+                <h2 class='alert alert-danger' role='alert' invisible = "payment_status != 'Pago Pendiente'">Pago Pendiente</h2>
+                <h2 class='alert alert-success' role='alert'  invisible = "payment_status != 'Pagado'">Pagado</h2>
+                <h2 class='alert alert-warning' role='alert' invisible = "payment_status != 'Pago Parcial'">Pago Parcial</h2>
+                <h2 class='alert alert-info' role='alert' invisible = "payment_status != 'En proceso de pago'">En proceso de pago</h2>
+                <h2 class='alert alert-success' role='alert' invisible = "payment_status != 'Revertido'">Revertido</h2>
+                <h2 class='alert alert-info' role='alert' invisible = "not is_ctacte">Cuenta Corriente</h2>
+                </center>
+            </xpath>
+        </field>
+    </record>
+    <!-- Inherited sale order tree view. -->
+    <record id="view_order_tree" model="ir.ui.view">
+        <field name="name">sale.order.view.tree.inherit.payment.status.in.sale</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="fresherp_ventas.list_fresherp_ventas"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='invoice_status']" position="after">
+                <field name="payment_status" optional="show"
+                       decoration-success="payment_status in ['Paid', 'Reversed', 'Pagado']"
+                       decoration-danger="payment_status == 'Not Paid'"
+                       decoration-info="payment_status == 'In Payment'"
+                       decoration-bf="payment_status == 'No invoice'"
+                       decoration-warning="payment_status in ['Partially Paid', 'Sin Procesar']"
+                       widget="badge"/>
+            </xpath>
+            <xpath expr="//field[@name='invoice_status']" position="attributes">
+                 <attribute name="decoration-info">invoice_status == 'no'</attribute>
+            </xpath>
+            <xpath expr="//field[@name='invoice_status']" position="replace">
+                 <field name="invoice_status_display"
+                       decoration-success="invoice_status_display in ['Presupuesto', 'Facturado']"
+                       decoration-danger="invoice_status_display == 'En Borrador'"
+                       widget="badge"
+                 />
+            </xpath>
+        </field>
+    </record>
+</odoo>

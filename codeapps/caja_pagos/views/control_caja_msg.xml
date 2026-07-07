@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_contol_caja_wizard_msg" model="ir.ui.view">
+        <field name="name">control.caja.wizard.msg</field>
+        <field name="model">caja.pagos.control</field>
+        <field name="arch" type="xml">
+	    <form string="Control Caja" >
+            <center>
+                    <div class="text-center" style="padding: 20px;">
+
+                    <field name="msg" nolabel="1" readonly="1"/>
+                    </div>
+            </center>
+                <footer>
+                    <button
+                        string="Confirmar"
+                        class="btn-secondary"
+                        special="cancel"
+                        />
+                </footer>
+
+            </form>
+        </field>
+    </record>
+</odoo>

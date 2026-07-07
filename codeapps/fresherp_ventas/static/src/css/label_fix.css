@@ -1,0 +1,10 @@
+.fresherp_label {
+    font-size: inherit !important;
+    opacity: 1 !important;
+    color: inherit !important;
+    font-weight: inherit !important;
+}
+
+.o_form_view[data-model="sale.order"] .fresherp_label {
+    font-size: inherit !important;
+}

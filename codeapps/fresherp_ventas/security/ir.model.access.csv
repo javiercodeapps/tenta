@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_scan_qr_wizard,scan.qr.wizard,model_scan_qr_wizard,,1,1,1,1
+access_sale_order_manager,sale_order_manager,model_sale_order,,1,1,1,1
+access_fresherp_ventas_mercadopago_manager,fresherp_ventas_mercadopago_manager,model_fresherp_ventas_mercadopago,,1,1,1,1
+access_popup_confirmation_user,access_popup_confirmation_user,model_paimon_popup_confirmation,base.group_user,1,1,1,1

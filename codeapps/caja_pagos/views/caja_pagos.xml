@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="caja_pagos_tipo_tree" model="ir.ui.view">
+        <field name="name">caja.pagos.tipo.tree.view</field>
+        <field name="model">caja.pagos.tipo</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name" />
+                <field name="partner_id" />
+                <field name="tipo_pago" />
+                <field name="talonario" />
+                <field name="origen" />
+                <field name="destino" />
+                <field name="company_id" />
+            </list>
+        </field>
+    </record>
+
+    <record id="caja_pagos_tipo_form" model="ir.ui.view">
+        <field name="name">caja.pagos.tipo.form.view</field>
+        <field name="model">caja.pagos.tipo</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group>
+                        <field name="name" />
+                        <field name="partner_id" />
+                        <field name="tipo_pago" />
+                        <field name="talonario" />
+                    </group>
+                    <group>
+                        <field name="origen" />
+                        <field name="destino" />
+                        <field name="company_id" />
+                    </group>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="caja_pagos_tree" model="ir.ui.view">
+        <field name="name">caja.pagos.tree.view</field>
+        <field name="model">caja.pagos</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="tipo" />
+                <field name="name" />
+                <field name="origen" />
+                <field name="create_date" />
+                <field name="monto" sum="Total" />
+                <field name="cashbox_session" />
+                <field name="user" />
+                <field name="company_id" />
+                <field name="state" decoration-success="state == 'done'" decoration-info="state == 'draft'" widget="badge" />
+            </list>
+        </field>
+    </record>
+
+    <record id="caja_pagos_form" model="ir.ui.view">
+        <field name="name">caja.pagos.form.view</field>
+        <field name="model">caja.pagos</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="modifico" string="Modifico" type="object" class="oe_highlight -primary" invisible="state == 'draft'" />
+                    <button name="generar" string="Generar" type="object" class="oe_highlight" invisible="state == 'done'" />
+                    <button name="imprimir" string="Imprimir" type="object" class="oe_highlight -primary" invisible="state == 'draft'" />
+                    <field name="state" widget="statusbar" statusbar_visible="draft,done" />
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="is_admin" invisible="1" />
+                            <field name="cashbox_session" readonly="state == 'done'" />
+                            <field name="tipo" domain="[('company_id', '=', company_id)]" options="{'no_quick_create':True,'no_create_edit':True}" readonly="state == 'done'" />
+                            <field name="name" readonly="state == 'done'" />
+                            <field name="origen" readonly="state == 'done'" />
+                            <field name="destino" readonly="state == 'done'" />
+                            <field name="monto" readonly="state == 'done'" />
+                            <!-- <field name="payment_group" readonly="1" /> -->
+                            <field name="payment" readonly="1" />
+                            <field name="company_id" />
+                        </group>
+                        <group />
+                    </group>
+                </sheet>
+                <chatter />
+            </form>
+        </field>
+    </record>
+
+    <record id="caja_pagos_tipo_menu" model="ir.actions.act_window">
+        <field name="name">Tipo Pagos</field>
+        <field name="res_model">caja.pagos.tipo</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="caja_pagos_menu" model="ir.actions.act_window">
+        <field name="name">Pagos/Transferencias</field>
+        <field name="res_model">caja.pagos</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_caja_pagos" name="Caja/Pagos" parent="sale.sale_menu_root" />
+
+    <menuitem id="menu_caja_pagos_tipo_form" name="Pagos de Caja Tipos" parent="account.root_payment_menu" action="caja_pagos_tipo_menu" />
+
+    <menuitem id="menu_caja_pagos_form" name="Pagos/Transferencias" parent="fresherp_ventas.menu_caja_pagos" action="caja_pagos_menu" />
+
+    <menuitem id="menu_control_efectivo_form" name="Control Caja" parent="fresherp_ventas.menu_caja_pagos" action="action_control_caja_wizard" />
+</odoo>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="custom_popup_confirmation" model="ir.ui.view">
+        <field name="name">Custom Popoup Confirmation</field>
+        <field name="model">paimon.popup.confirmation</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Confirmation" version="15.0">
+                <separator string="Confirmation" colspan="6" />
+                <field name="message" colspan="4" nolabel="1" readonly="1" widget="html" />
+                <newline />
+                <separator colspan="6" />
+                <footer>
+                    <button name="confirm" string="MP Link" type="object" context="{'payment_type': 'MP Link'}" class="oe_highlight btn-primary px-4 py-4" />
+                    <button name="confirm" string="MP QR" type="object" context="{'payment_type': 'MP QR'}" class="oe_highlight btn-primary px-4 py-4" />
+                    <button name="confirm" string="MP Point" type="object" context="{'payment_type': 'MP Point'}" class="oe_highlight btn-primary px-4 py-4" />
+                    <button name="confirm" string="MP Transferencia" type="object" context="{'payment_type': 'MP Transferencia'}" class="oe_highlight btn-primary px-4 py-4" />
+                    <button string="No" special="cancel" class="btn btn-primary px-4 py-4" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="custom_popup_efectivo" model="ir.ui.view">
+        <field name="name">Custom Popoup Efectivo</field>
+        <field name="model">paimon.popup.confirmation</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Confirmation" version="15.0">
+                <separator string="Confirmation" colspan="6" />
+                <field name="message" colspan="4" nolabel="1" readonly="1" widget="html" />
+                <newline />
+                <separator colspan="6" />
+                <h2>
+                    <field name="text" widget="float" nolabel="1" />
+                </h2>
+                <footer>
+                    <button name="confirm" string="OTROS" type="object" context="{'payment_type':'Multiple','payment_type_multi': 'OTROS'}" class="btn btn-primary px-4 py-4" />
+                    <button name="confirm" string="MP Link" type="object" context="{'payment_type':'Multiple','payment_type_multi': 'MP Link'}" class="oe_highlight btn-primary px-4 py-4" />
+                    <button name="confirm" string="MP QR" type="object" context="{'payment_type':'Multiple','payment_type_multi': 'MP QR'}" class="oe_highlight btn-primary px-4 py-4" />
+                    <button name="confirm" string="MP Point" type="object" context="{'payment_type':'Multiple','payment_type_multi': 'MP Point'}" class="oe_highlight btn-primary px-4 py-4" />
+                    <button name="confirm" string="MP Transferencia" type="object" context="{'payment_type':'Multiple','payment_type_multi': 'MP Transferencia'}" class="oe_highlight btn-primary px-4 py-4" />
+                    <button string="No" special="cancel" class="btn btn-primary px-4 py-4" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="custom_popup_clave" model="ir.ui.view">
+        <field name="name">Custom Popoup clave</field>
+        <field name="model">paimon.popup.confirmation</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Autorizacion" version="15.0">
+                <separator string="Autorizacion" colspan="6" />
+                <field name="message" colspan="4" nolabel="1" readonly="1" widget="html" />
+                <h2>
+                    <field name="text" colspan="4" nolabel="1" />
+                </h2>
+                <newline />
+                <separator colspan="6" />
+                <footer>
+                    <button name="confirm" string="Autorizar" type="object" class="oe_highlight btn-primary px-4 py-4" />
+                    <button string="No" special="cancel" class="btn btn-primary px-4 py-4" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="custom_popup_mp" model="ir.ui.view">
+        <field name="name">Custom Popoup MP</field>
+        <field name="model">paimon.popup.confirmation</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="MercadoPago" version="15.0">
+                <h2>ESPERANDO PAGO</h2>
+                <field name="message" colspan="4" nolabel="1" readonly="1" widget="html" />
+                <footer>
+                    <button name="confirm" string="Verificar Pago" type="object" class="oe_highlight btn-primary px-4 py-4" />
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

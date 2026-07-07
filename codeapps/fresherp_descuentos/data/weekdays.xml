@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Días de la semana para sale.order.discount.weekdays -->
+        <record id="weekday_monday" model="sale.order.discount.weekdays">
+            <field name="day">0</field>
+            <field name="name">LUNES</field>
+        </record>
+        
+        <record id="weekday_tuesday" model="sale.order.discount.weekdays">
+            <field name="day">1</field>
+            <field name="name">MARTES</field>
+        </record>
+        
+        <record id="weekday_wednesday" model="sale.order.discount.weekdays">
+            <field name="day">2</field>
+            <field name="name">MIERCOLES</field>
+        </record>
+        
+        <record id="weekday_thursday" model="sale.order.discount.weekdays">
+            <field name="day">3</field>
+            <field name="name">JUEVES</field>
+        </record>
+        
+        <record id="weekday_friday" model="sale.order.discount.weekdays">
+            <field name="day">4</field>
+            <field name="name">VIERNES</field>
+        </record>
+        
+        <record id="weekday_saturday" model="sale.order.discount.weekdays">
+            <field name="day">5</field>
+            <field name="name">SABADO</field>
+        </record>
+        
+        <record id="weekday_sunday" model="sale.order.discount.weekdays">
+            <field name="day">6</field>
+            <field name="name">DOMINGO</field>
+        </record>
+    </data>
+</odoo>

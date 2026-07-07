@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="sale.field_sale_order__invoice_status" model="ir.model.fields.selection">
+            <field name="name">no</field>
+            <field name="value">En Borrador</field>
+        </record>
+    </data>
+</odoo>

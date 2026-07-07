@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ==================== BATCH FORM ==================== -->
+    <record id="view_mercado_import_batch_form" model="ir.ui.view">
+        <field name="name">mercado.import.batch.form</field>
+        <field name="model">mercado.import.batch</field>
+        <field name="arch" type="xml">
+            <form string="Mercado Import">
+                <header>
+                    <button name="action_parse" string="Parsear Excel"
+                            type="object" class="oe_highlight"
+                            invisible="state != 'draft'"/>
+                    <button name="action_assign_products" string="Asignar Productos"
+                            type="object"
+                            invisible="state not in ('parsed', 'reviewed')"/>
+                    <button name="action_review" string="Marcar Revisado"
+                            type="object"
+                            invisible="state != 'parsed'"/>
+                    <button name="action_generate" string="Generar Ordenes"
+                            type="object" class="oe_highlight"
+                            invisible="state != 'reviewed'"/>
+                    <button name="action_confirm_all_orders" string="Confirmar Ordenes"
+                            type="object" class="oe_highlight"
+                            invisible="state != 'done'"/>
+                    <button name="action_revert_generated_orders" string="Eliminar Ordenes"
+                            type="object" 
+                            invisible="state != 'done'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,parsed,reviewed,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_purchase_lines" type="object"
+                                class="oe_stat_button" icon="fa-shopping-cart">
+                            <field name="count_purchase_lines" widget="statinfo"
+                                   string="Lineas Compra"/>
+                        </button>
+                        <button name="action_open_sale_lines" type="object"
+                                class="oe_stat_button" icon="fa-usd">
+                            <field name="count_sale_lines" widget="statinfo"
+                                   string="Lineas Venta"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="data_file" filename="filename" invisible="state  != 'draft'" required="1"/>
+                            <field name="filename" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="parent_company_ref" readonly= "state != 'draft'"/>
+                            <field name="info_purchase" invisible="not info_purchase"/>
+                            <field name="info_sale" invisible="not info_sale"/>
+                            <field name="info_internal" invisible="not info_internal"/>
+                        </group>
+                    </group>
+
+                    <notebook invisible="state == 'draft'">
+                        <page string="Lineas de Compra" name="purchase_lines">
+                            <field name="purchase_line_ids"
+                                   context="{'default_batch_id': id}">
+                                <list editable="bottom">
+                                    <field name="product_code"/>
+                                    <field name="product_id"/>
+                                    <field name="product_name"/>
+                                    <field name="supplier_ref"/>
+                                    <field name="supplier_id"/>
+                                    <field name="supplier_name"/>
+                                    <field name="total_qty"/>
+                                    <field name="p_u_raw"/>
+                                    <field name="p_u_unit_type"/>
+                                    <field name="costo_unit"/>
+                                    <field name="venta_unit"/>
+                                    <field name="has_sena"/>
+                                    <field name="valor_sena" invisible="has_sena == False"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Lineas de Venta" name="sale_lines">
+                            <field name="sale_line_ids"
+                                   context="{'default_batch_id': id}">
+                                <list editable="bottom">
+                                    <field name="branch_ref"/>
+                                    <field name="branch_company_id"/>
+                                    <field name="branch_partner_id"/>
+                                    <field name="product_code"/>
+                                    <field name="product_id"/>
+                                    <field name="product_name"/>
+                                    <field name="qty"/>
+                                    <field name="unit_sale"/>
+                                    <field name="total_sale"/>
+                                    <field name="has_sena"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Ordenes Generadas" name="orders" invisible="state != 'done'">
+                            <group>
+                                <group string="Compra a Proveedores">
+                                    <field name="purchase_order_ids" nolabel="1"/>
+                                </group>
+                                <group string="Venta a Sucursales">
+                                    <field name="sale_order_ids" nolabel="1"/>
+                                </group>
+                                <group string="Compra Interna">
+                                    <field name="internal_purchase_order_ids" nolabel="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Log" name="log">
+                            <field name="import_log" nolabel="1" readonly="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ==================== BATCH TREE ==================== -->
+    <record id="view_mercado_import_batch_tree" model="ir.ui.view">
+        <field name="name">mercado.import.batch.tree</field>
+        <field name="model">mercado.import.batch</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="create_date" string="Fecha"/>
+                <field name="parent_company_ref"/>
+                <field name="state"/>
+                <field name="count_purchase_lines" string="# Compra"/>
+                <field name="count_sale_lines" string="# Venta"/>
+                <field name="info_purchase"/>
+                <field name="info_sale"/>
+                <field name="info_internal"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ==================== PURCHASE LINE TREE ==================== -->
+    <record id="view_mercado_import_purchase_line_tree" model="ir.ui.view">
+        <field name="name">mercado.import.purchase.line.tree</field>
+        <field name="model">mercado.import.purchase.line</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="batch_id"/>
+                <field name="product_code"/>
+                <field name="product_id"/>
+                <field name="product_name"/>
+                <field name="supplier_ref"/>
+                <field name="supplier_id"/>
+                <field name="supplier_name"/>
+                <field name="marca"/>
+                <field name="total_qty"/>
+                <field name="p_u_raw"/>
+                <field name="p_u_qty"/>
+                <field name="p_u_unit_type"/>
+                <field name="costo_unit"/>
+                <field name="venta_unit"/>
+                <field name="has_sena"/>
+                <field name="valor_sena"/>
+                <field name="costo_mercad"/>
+                <field name="costo_vacio"/>
+                <field name="total"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ==================== SALE LINE TREE ==================== -->
+    <record id="view_mercado_import_sale_line_tree" model="ir.ui.view">
+        <field name="name">mercado.import.sale.line.tree</field>
+        <field name="model">mercado.import.sale.line</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="branch_ref"/>
+                <field name="branch_company_id"/>
+                <field name="branch_partner_id"/>
+                <field name="product_code"/>
+                <field name="product_id"/>
+                <field name="product_name"/>
+                <field name="qty"/>
+                <field name="unit_sale"/>
+                <field name="total_sale"/>
+                <field name="has_sena"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ==================== BRANCH CONFIG ==================== -->
+    <record id="view_mercado_branch_config_tree" model="ir.ui.view">
+        <field name="name">mercado.import.branch.config.tree</field>
+        <field name="model">mercado.import.branch.config</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="name"/>
+                <field name="company_id"/>
+                <field name="partner_id"/>
+                <field name="qty_col"/>
+                <field name="sale_col"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ==================== UNIT CONFIG ==================== -->
+    <record id="view_mercado_unit_config_tree" model="ir.ui.view">
+        <field name="name">mercado.import.unit.config.tree</field>
+        <field name="model">mercado.import.unit.config</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="uom_search_term"/>
+                <field name="uom_factor"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ==================== ACTIONS ==================== -->
+    <record id="action_mercado_import_batch" model="ir.actions.act_window">
+        <field name="name">Import Mercado</field>
+        <field name="res_model">mercado.import.batch</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_mercado_import_purchase_line" model="ir.actions.act_window">
+        <field name="name">Lineas de Compra</field>
+        <field name="res_model">mercado.import.purchase.line</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_mercado_import_sale_line" model="ir.actions.act_window">
+        <field name="name">Lineas de Venta</field>
+        <field name="res_model">mercado.import.sale.line</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_mercado_branch_config" model="ir.actions.act_window">
+        <field name="name">Sucursales</field>
+        <field name="res_model">mercado.import.branch.config</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_mercado_unit_config" model="ir.actions.act_window">
+        <field name="name">Unidades</field>
+        <field name="res_model">mercado.import.unit.config</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

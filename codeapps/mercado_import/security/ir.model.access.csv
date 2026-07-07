@@ -1,0 +1,10 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_mercado_batch_manager,mercado.batch manager,model_mercado_import_batch,base.group_system,1,1,1,1
+access_mercado_batch_user,mercado.batch user,model_mercado_import_batch,purchase.group_purchase_user,1,1,1,0
+access_mercado_purchase_line_manager,mercado.purchase.line manager,model_mercado_import_purchase_line,base.group_system,1,1,1,1
+access_mercado_purchase_line_user,mercado.purchase.line user,model_mercado_import_purchase_line,purchase.group_purchase_user,1,1,1,0
+access_mercado_sale_line_manager,mercado.sale.line manager,model_mercado_import_sale_line,base.group_system,1,1,1,1
+access_mercado_sale_line_user,mercado.sale.line user,model_mercado_import_sale_line,sales_team.group_sale_salesman,1,1,1,0
+access_mercado_wizard,mercado.wizard,model_mercado_import_wizard,base.group_user,1,1,1,0
+access_mercado_branch_config,mercado.branch.config,model_mercado_import_branch_config,base.group_system,1,1,1,1
+access_mercado_unit_config,mercado.unit.config,model_mercado_import_unit_config,base.group_system,1,1,1,1

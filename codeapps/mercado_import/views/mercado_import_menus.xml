@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <menuitem id="menu_mercado_import_root"
+                  name="Mercado Import"
+                  sequence="100"/>
+
+        <menuitem id="menu_mercado_import_batches"
+                  name="Importaciones"
+                  parent="menu_mercado_import_root"
+                  action="action_mercado_import_batch"
+                  sequence="10"/>
+
+        <menuitem id="menu_mercado_import_purchase_lines"
+                  name="Lineas Compra"
+                  parent="menu_mercado_import_root"
+                  action="action_mercado_import_purchase_line"
+                  sequence="20"/>
+
+        <menuitem id="menu_mercado_import_sale_lines"
+                  name="Lineas Venta"
+                  parent="menu_mercado_import_root"
+                  action="action_mercado_import_sale_line"
+                  sequence="30"/>
+
+        <menuitem id="menu_mercado_import_config"
+                  name="Configuracion"
+                  parent="menu_mercado_import_root"
+                  sequence="100"/>
+
+        <menuitem id="menu_mercado_import_branch_config"
+                  name="Sucursales"
+                  parent="menu_mercado_import_config"
+                  action="action_mercado_branch_config"
+                  sequence="10"/>
+
+        <menuitem id="menu_mercado_import_unit_config"
+                  name="Unidades"
+                  parent="menu_mercado_import_config"
+                  action="action_mercado_unit_config"
+                  sequence="20"/>
+    </data>
+</odoo>

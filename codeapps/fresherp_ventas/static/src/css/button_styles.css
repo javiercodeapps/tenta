@@ -1,0 +1,43 @@
+.btn-qr-cyan {
+    background-color: #00bcd4 !important;
+    border-color: #00bcd4 !important;
+    color: white !important;
+    font-weight: bold;
+}
+.btn-qr-cyan:hover {
+    background-color: #0097a7 !important;
+    border-color: #0097a7 !important;
+}
+
+.btn-qr-blue {
+    background-color: #0d6efd !important;
+    border-color: #0d6efd !important;
+    color: white !important;
+    font-weight: bold;
+}
+.btn-qr-blue:hover {
+    background-color: #0b5ed7 !important;
+    border-color: #0a58ca !important;
+}
+
+.btn-qr-yellow {
+    background-color: #ffc107 !important;
+    border-color: #ffc107 !important;
+    color: black !important;
+    font-weight: bold;
+}
+.btn-qr-yellow:hover {
+    background-color: #d3a000 !important;
+    border-color: #d3a000 !important;
+}
+
+.btn-qr-green {
+    background-color: #198754 !important;
+    border-color: #198754 !important;
+    color: white !important;
+    font-weight: bold;
+}
+.btn-qr-green:hover {
+    background-color: #157347 !important;
+    border-color: #146c43 !important;
+}

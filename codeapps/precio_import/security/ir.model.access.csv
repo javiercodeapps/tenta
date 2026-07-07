@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_precio_export,precio.export user,model_precio_export,base.group_user,1,1,1,1
+access_import_precio_wizard,import.precio.wizard user,model_import_precio_wizard,base.group_user,1,1,1,0
