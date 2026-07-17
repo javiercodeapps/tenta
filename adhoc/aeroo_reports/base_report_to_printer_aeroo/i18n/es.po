@@ -1,0 +1,43 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* base_report_to_printer_aeroo
+# 
+# Translators:
+# Juan José Scarafía <scarafia.juanjose@gmail.com>, 2025
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-15 15:15+0000\n"
+"PO-Revision-Date: 2025-10-15 15:14+0000\n"
+"Last-Translator: Juan José Scarafía <scarafia.juanjose@gmail.com>, 2025\n"
+"Language-Team: Spanish (https://app.transifex.com/adhoc/teams/46451/es/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Language: es\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
+
+#. module: base_report_to_printer_aeroo
+#. odoo-javascript
+#: code:addons/base_report_to_printer_aeroo/static/src/js/qweb_action_manager.js:0
+msgid "Could not sent to printer!"
+msgstr ""
+
+#. module: base_report_to_printer_aeroo
+#. odoo-python
+#: code:addons/base_report_to_printer_aeroo/models/ir_actions_report.py:0
+msgid "No printer configured to print this report."
+msgstr ""
+
+#. module: base_report_to_printer_aeroo
+#: model:ir.model,name:base_report_to_printer_aeroo.model_ir_actions_report
+msgid "Report Action"
+msgstr "Acción de informe"
+
+#. module: base_report_to_printer_aeroo
+#. odoo-javascript
+#: code:addons/base_report_to_printer_aeroo/static/src/js/qweb_action_manager.js:0
+msgid "Successfully sent to printer!"
+msgstr ""

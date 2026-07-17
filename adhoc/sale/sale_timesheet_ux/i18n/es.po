@@ -1,0 +1,150 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* sale_timesheet_ux
+# 
+# Translators:
+# Juan José Scarafía <scarafia.juanjose@gmail.com>, 2024
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-07-14 17:11+0000\n"
+"PO-Revision-Date: 2024-12-11 14:04+0000\n"
+"Last-Translator: Juan José Scarafía <scarafia.juanjose@gmail.com>, 2024\n"
+"Language-Team: Spanish (https://app.transifex.com/adhoc/teams/46451/es/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Language: es\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
+
+#. module: sale_timesheet_ux
+#: model:ir.model,name:sale_timesheet_ux.model_account_analytic_line
+msgid "Analytic Line"
+msgstr "Línea analítica"
+
+#. module: sale_timesheet_ux
+#: model_terms:ir.ui.view,arch_db:sale_timesheet_ux.change_allow_billable_wizzard
+msgid ""
+"Are you sure you want to change the 'Allow Billable' field to False for this"
+" project?"
+msgstr ""
+"¿Estas seguro de que deseas cambiar el campo 'Permitir Facturación' a falso "
+"para este proyecto?"
+
+#. module: sale_timesheet_ux
+#: model_terms:ir.ui.view,arch_db:sale_timesheet_ux.res_config_settings_view_form
+msgid ""
+"By default changes on project, task, and tickets related to billing "
+"information are synced to timesheet lines. This can cause automated "
+"modification of the sale line associated to a timesheet. Activate this "
+"option if you want to protect timesheet lines so that changes won't modify "
+"the associated sales lines (highly recommended especially for Prepaid/Fixed "
+"Price use cases)"
+msgstr ""
+"Por defecto, cambios en proyectos, tareas y tickets relacionados a la "
+"información de facturación se sincronizan con las líneas de hojas de horas. "
+"Esto puede causar modificaciones automáticas de la línea de venta asociada a"
+" la hoja de horas. Active esta opción si quiere protejer las línes de las "
+"hojas de horas para que los cambios no modifiquen las líneas de venta "
+"asociadas (altamente recomendado especialmente para casos de prepago/precio "
+"fijo"
+
+#. module: sale_timesheet_ux
+#: model_terms:ir.ui.view,arch_db:sale_timesheet_ux.change_allow_billable_wizzard
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: sale_timesheet_ux
+#: model:ir.model,name:sale_timesheet_ux.model_res_config_settings
+msgid "Config Settings"
+msgstr "Ajustes de configuración"
+
+#. module: sale_timesheet_ux
+#: model_terms:ir.ui.view,arch_db:sale_timesheet_ux.change_allow_billable_wizzard
+msgid "Confirm Allow Billable Change"
+msgstr "Confirmar cambio de Permitir Facturación"
+
+#. module: sale_timesheet_ux
+#: model:ir.model,name:sale_timesheet_ux.model_allow_billable_wizard
+msgid "Confirmar cambio de valor de Allow Billable"
+msgstr "Confirmar cambio de valor de Permitir Facturacióm"
+
+#. module: sale_timesheet_ux
+#: model:ir.model.fields,field_description:sale_timesheet_ux.field_allow_billable_wizard__create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: sale_timesheet_ux
+#: model:ir.model.fields,field_description:sale_timesheet_ux.field_allow_billable_wizard__create_date
+msgid "Created on"
+msgstr "Creado el"
+
+#. module: sale_timesheet_ux
+#: model_terms:ir.ui.view,arch_db:sale_timesheet_ux.view_edit_project_billable_inherit_form
+msgid "Deactivate Billable"
+msgstr "Desactivar Facturación"
+
+#. module: sale_timesheet_ux
+#: model:ir.model.fields,field_description:sale_timesheet_ux.field_allow_billable_wizard__display_name
+msgid "Display Name"
+msgstr "Nombre para mostrar"
+
+#. module: sale_timesheet_ux
+#: model:ir.model.fields,field_description:sale_timesheet_ux.field_allow_billable_wizard__id
+msgid "ID"
+msgstr ""
+
+#. module: sale_timesheet_ux
+#: model:ir.model.fields,field_description:sale_timesheet_ux.field_allow_billable_wizard__write_uid
+msgid "Last Updated by"
+msgstr "Última actualización por"
+
+#. module: sale_timesheet_ux
+#: model:ir.model.fields,field_description:sale_timesheet_ux.field_allow_billable_wizard__write_date
+msgid "Last Updated on"
+msgstr "Última actualización el"
+
+#. module: sale_timesheet_ux
+#. odoo-python
+#: code:addons/sale_timesheet_ux/models/project_project.py:0
+#: model:ir.model,name:sale_timesheet_ux.model_project_project
+#: model:ir.model.fields,field_description:sale_timesheet_ux.field_allow_billable_wizard__project_id
+msgid "Project"
+msgstr "Proyecto"
+
+#. module: sale_timesheet_ux
+#: model:ir.model.fields,field_description:sale_timesheet_ux.field_res_config_settings__timesheet_protect_so_line
+msgid "Protect SO Line on Timesheets?"
+msgstr "¿Proteger línea de OV en las hojas de horas?"
+
+#. module: sale_timesheet_ux
+#: model:ir.model.fields,field_description:sale_timesheet_ux.field_project_task__order_id
+msgid "Related Sales Order"
+msgstr "Orden de venta relacionada"
+
+#. module: sale_timesheet_ux
+#: model:ir.model,name:sale_timesheet_ux.model_sale_order
+msgid "Sales Order"
+msgstr "Pedido de venta"
+
+#. module: sale_timesheet_ux
+#: model:ir.model,name:sale_timesheet_ux.model_sale_order_line
+msgid "Sales Order Line"
+msgstr "Línea de pedido de venta"
+
+#. module: sale_timesheet_ux
+#: model:ir.model.fields,help:sale_timesheet_ux.field_project_task__order_id
+msgid "Sales order to which the task is linked."
+msgstr "Orden de venta a la que está vinculada la tarea."
+
+#. module: sale_timesheet_ux
+#: model:ir.model,name:sale_timesheet_ux.model_project_task
+msgid "Task"
+msgstr "Tarea"
+
+#. module: sale_timesheet_ux
+#: model_terms:ir.ui.view,arch_db:sale_timesheet_ux.change_allow_billable_wizzard
+msgid "Yes, Change it"
+msgstr "Sí, cámbialo"

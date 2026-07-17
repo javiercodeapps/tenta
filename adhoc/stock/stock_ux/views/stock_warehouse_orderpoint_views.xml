@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <record id="view_warehouse_orderpoint_tree_editable" model="ir.ui.view">
+        <field name="name">stock.warehouse.orderpoint.list</field>
+        <field name="model">stock.warehouse.orderpoint</field>
+        <field name="inherit_id" ref="stock.view_warehouse_orderpoint_tree_editable"/>
+        <field name="arch" type="xml">
+            <list position="attributes">
+                <attribute name="decoration-muted">not active and not active_product</attribute>
+                <attribute name="decoration-danger">not active and active_product</attribute>
+            </list>
+            <field name="active" position="after">
+                <field name="active_product" column_invisible="1" />
+            </field>
+            <field name="group_id" position="after">
+                <field name="rotation" optional="show"/>
+                <field name="rotation_stdev" optional="show"/>
+                <field name="warehouse_rotation" optional="show"/>
+                <field name="warehouse_rotation_stdev" optional="show"/>
+            </field>
+            <field name="product_uom_name" position="replace">
+                <field name="reviewed" widget="boolean_toggle" />
+            </field>
+        </field>
+    </record>
+
+    <record id="view_warehouse_orderpoint_chatter" model="ir.ui.view">
+        <field name="name">stock.warehouse.orderpoint.chatter</field>
+        <field name="model">stock.warehouse.orderpoint</field>
+        <field name="inherit_id" ref="stock.view_warehouse_orderpoint_form"/>
+        <field name="arch" type="xml">
+            <sheet position="after">
+                <chatter/>
+            </sheet>
+        </field>
+    </record>
+
+</odoo>

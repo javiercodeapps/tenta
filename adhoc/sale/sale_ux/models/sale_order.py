@@ -1,0 +1,327 @@
+##############################################################################
+# For copyright and license notices, see __manifest__.py file in module root
+# directory
+##############################################################################
+from datetime import timedelta
+
+from odoo import _, api, fields, models
+from odoo.exceptions import UserError, ValidationError
+from odoo.tools import float_is_zero
+from odoo.tools.safe_eval import safe_eval
+
+
+class SaleOrder(models.Model):
+    _inherit = "sale.order"
+
+    internal_notes = fields.Html()
+    payment_term_id = fields.Many2one(
+        tracking=True,
+    )
+    force_invoiced_status = fields.Selection(
+        [("no", "Nothing to Invoice"), ("invoiced", "Fully Invoiced")],
+        tracking=True,
+        copy=False,
+    )
+    commercial_partner_id = fields.Many2one(
+        "res.partner",
+        string="Commercial Entity",
+        related="partner_id.commercial_partner_id",
+        store=True,
+        compute_sudo=True,
+    )
+    amount_uninvoiced = fields.Monetary(
+        string="Un-invoiced",
+        compute="_compute_amount_uninvoiced",
+        help="Uninvoiced amount, regardless of invoice policy.",
+    )
+    amount_to_invoice = fields.Monetary(
+        help="Total amount available for invoicing according to the invoice policy for each sale order line."
+        "Down payments are not included in this calculation."
+    )
+
+    @api.depends("invoice_ids.state", "currency_id", "amount_total")
+    def _compute_amount_uninvoiced(self):
+        for order in self:
+            if order.invoice_status == "invoiced" or order.state != "sale":
+                order.amount_uninvoiced = 0.0
+                continue
+            invoices = order.invoice_ids.filtered(
+                lambda x: x.state == "posted" or x.payment_state == "invoicing_legacy"
+            )
+            order.amount_uninvoiced = order.amount_total - invoices._get_sale_order_invoiced_amount(order)
+
+    def _prepare_invoice(self):
+        vals = super(SaleOrder, self)._prepare_invoice()
+        propagate_internal_notes = (
+            self.env["ir.config_parameter"].sudo().get_param("sale.propagate_internal_notes") == "True"
+        )
+        propagate_note = self.env["ir.config_parameter"].sudo().get_param("sale.propagate_note") == "True"
+        if propagate_internal_notes and self.internal_notes:
+            vals.update({"internal_notes": self.internal_notes})
+        if "narration" in vals and not propagate_note:
+            vals.pop("narration")
+        company = (
+            self._context.get("force_company", False)
+            and self.env["res.company"].browse(self._context.get("force_company"))
+            or self.env.company
+        )
+        if (
+            not propagate_note
+            and self.env["ir.config_parameter"].sudo().get_param("account.use_invoice_terms")
+            and company.invoice_terms
+        ):
+            vals["narration"] = company.invoice_terms
+        return vals
+
+    @api.onchange("pricelist_id")
+    def _onchange_pricelist_id_show_update_prices(self):
+        super()._onchange_pricelist_id_show_update_prices()
+        update_prices_automatically = safe_eval(
+            self.env["ir.config_parameter"].sudo().get_param("sale_ux.update_prices_automatically", "False")
+        )
+        if self.order_line and update_prices_automatically:
+            # we need to user the same code as odoo in action_update_prices(),
+            # because the "message_post" method isn't available over an onchange trigger.
+            super()._recompute_prices()
+
+    @api.onchange("fiscal_position_id")
+    def _onchange_fiscal_position_id(self):
+        """
+        No utilizamos el método action_update_taxes() directamente porque no funciona
+        el message_post sin que se encuentre guardado el registro.
+        """
+        self.ensure_one()
+        lines_to_recompute = self.order_line.filtered(lambda line: not line.display_type)
+        lines_to_recompute._compute_tax_id()
+        self.show_update_fpos = False
+
+    def action_cancel(self):
+        invoice_lines = self.sudo().env["account.move.line"].search([("sale_line_ids", "in", self.order_line.ids)])
+        moves = invoice_lines.mapped("move_id").filtered(
+            lambda x: x.move_type in ("out_invoice", "out_refund") and x.state not in ["cancel", "draft"]
+        )
+        # Check that all invoices are reversed and belong to this sale order
+        invoices = moves.filtered(lambda m: m.move_type == "out_invoice")
+        valid_invoices = all(inv.payment_state == "reversed" and inv.invoice_origin == self.name for inv in invoices)
+        # Check that all refunds are paid and belong to this sale order
+        if valid_invoices:
+            refunds = moves.filtered(lambda m: m.move_type == "out_refund")
+            valid_refunds = all(ref.payment_state == "paid" and ref.invoice_origin == self.name for ref in refunds)
+            valid_invoices = valid_refunds if refunds else False
+
+        if moves and not (valid_invoices):
+            raise UserError(_("Unable to cancel this sale order. You must first " "cancel related bills and pickings."))
+        if any(order.locked for order in self):
+            # No encontre otra forma de evitar el raise usererror que impide que ordenes se cancelen si el pedido está bloqueado
+            cancel_warning = self._show_cancel_wizard()
+            if cancel_warning:
+                self.ensure_one()
+                template_id = self.env["ir.model.data"]._xmlid_to_res_id(
+                    "sale.mail_template_sale_cancellation", raise_if_not_found=False
+                )
+                lang = self.env.context.get("lang")
+                template = self.env["mail.template"].browse(template_id)
+                if template.lang:
+                    lang = template._render_lang(self.ids)[self.id]
+                ctx = {
+                    "default_template_id": template_id,
+                    "default_order_id": self.id,
+                    "mark_so_as_canceled": True,
+                    "default_email_layout_xmlid": "mail.mail_notification_layout_with_responsible_signature",
+                    "model_description": self.with_context(lang=lang).type_name,
+                }
+                self.action_unlock()
+                return {
+                    "name": _("Cancel %s", self.type_name),
+                    "view_mode": "form",
+                    "res_model": "sale.order.cancel",
+                    "view_id": self.env.ref("sale.sale_order_cancel_view_form").id,
+                    "type": "ir.actions.act_window",
+                    "context": ctx,
+                    "target": "new",
+                }
+            else:
+                return self._action_cancel()
+        else:
+            return super().action_cancel()
+
+    @api.constrains("force_invoiced_status")
+    def check_force_invoiced_status(self):
+        group = self.sudo().env.ref("base.group_system")
+        for rec in self:
+            if rec.force_invoiced_status and not self.env.user.has_group("base.group_system"):
+                raise ValidationError(
+                    _('Only users with "%s / %s" can Set Invoiced manually') % (group.category_id.name, group.name)
+                )
+
+    # COMENTAMOS PARA FIX TICKET 68773. ToDo: Evaluar
+    # def _get_forbidden_state_confirm(self):
+    #     # This is because some reason the button are present when you
+    #     # validate, this way the sale order only validate if the state are
+    #     # 'draft' or 'sent'
+    #     return super()._get_forbidden_state_confirm() | set({'sale'})
+
+    def _get_update_prices_lines(self):
+        lines = super()._get_update_prices_lines()
+        lines_to_not_update_ids = self._context.get("lines_to_not_update_ids", [])
+        return lines.filtered(lambda l: l.id not in lines_to_not_update_ids)
+
+    def action_update_prices(self):
+        # avoiding execution for empty records
+        if not self:
+            return
+        super().action_update_prices()
+
+    def _create_invoices(self, grouped=False, final=False, date=None):
+        invoices = super()._create_invoices(grouped=grouped, final=final, date=date)
+        precision = self.env["decimal.precision"].precision_get("Product Unit of Measure")
+        filtered_invoices = invoices.filtered(
+            lambda i: float_is_zero(i.amount_total, precision_digits=precision)
+            and all([line.quantity <= 0.0 for line in i.invoice_line_ids])
+        )
+        filtered_invoices.action_switch_move_type()
+        filtered_invoices.mapped("invoice_line_ids").mapped(lambda line: line.write({"quantity": abs(line.quantity)}))
+        return invoices
+
+    def action_preview_sale_order(self):
+        """Open sale Preview in a new Tab"""
+        res = super().action_preview_sale_order()
+        res.update({"target": "new"})
+        return res
+
+    def _get_invoiceable_lines(self, final=False):
+        """Remove if user allow to remove all notes for invoiceable lines"""
+        dont_send_notes_to_invoices = (
+            self.env["ir.config_parameter"].sudo().get_param("sale_ux.dont_send_notes_to_invoices", "False") == "True"
+        )
+        res = super()._get_invoiceable_lines(final=final)
+        if dont_send_notes_to_invoices:
+            res -= res.filtered(lambda x: x.display_type == "line_note")
+
+        return res
+
+    def _prepare_analytic_account_data(self, prefix=None):
+        if (
+            self.env["ir.config_parameter"].sudo().get_param("sale_ux.analytic_account_without_company", "False")
+            == "True"
+        ):
+            self.ensure_one()
+            name = self.name
+            if prefix:
+                name = prefix + ": " + self.name
+            project_plan, _other_plans = self.env["account.analytic.plan"]._get_all_plans()
+            return {
+                "name": name,
+                "code": self.client_order_ref,
+                "company_id": False,
+                "plan_id": project_plan.id,
+                "partner_id": self.partner_id.id,
+            }
+        return super(SaleOrder, self)._prepare_analytic_account_data(prefix=prefix)
+
+    def _cron_clean_old_quotations(self, website=None):
+        cancel_old_quotations = bool(
+            self.env["ir.config_parameter"].sudo().get_param("sale_ux.cancel_old_quotations", False)
+        )
+        if cancel_old_quotations or website:
+            today = fields.Date.today()
+            days_to_keep = int(self.env["ir.config_parameter"].sudo().get_param("sale_ux.days_to_keep_quotations", 30))
+            oldest_date = today - timedelta(days=days_to_keep)
+            domain = [
+                ("state", "in", ["draft", "sent"]),
+                ("date_order", "<", oldest_date),
+            ]
+            if cancel_old_quotations and self._context.get("website_installed") and not website:
+                # s.o que no tienen website
+                domain = domain + [("website_id", "=", False)]
+            elif not cancel_old_quotations and website:
+                domain = domain + [("website_id", "!=", False)]
+            quotations_to_cancel = self.env["sale.order"].search(domain)
+            for quotation in quotations_to_cancel:
+                quotation._action_cancel()
+                quotation.message_post(body=_("This quotation has been automatically canceled due to its expiration."))
+
+    @api.constrains("pricelist_id")
+    def _check_changes_locked_orders(self):
+        for rec in self.filtered(lambda x: x.state == "done"):
+            raise ValidationError(_("You cannot modify already locked orders."))
+
+    def get_update_included_pdf_params(self):
+        result = super().get_update_included_pdf_params()
+        auto_select_enabled = (
+            self.env["ir.config_parameter"].sudo().get_param("sale_ux.auto_select_all_documents", "False") == "True"
+        )
+        if not auto_select_enabled:
+            return result
+
+        if self.available_product_document_ids and not self.quotation_document_ids:
+            self.quotation_document_ids = self.available_product_document_ids
+            selected_headers = self.quotation_document_ids.filtered(lambda d: d.document_type == "header")
+            selected_footers = self.quotation_document_ids.filtered(lambda d: d.document_type == "footer")
+
+            for header in result.get("headers", {}).get("files", []):
+                if any(h.id == header["id"] for h in selected_headers):
+                    header["is_selected"] = True
+
+            for footer in result.get("footers", {}).get("files", []):
+                if any(f.id == footer["id"] for f in selected_footers):
+                    footer["is_selected"] = True
+
+        for line in self.order_line:
+            if line.available_product_document_ids and not line.product_document_ids:
+                line.product_document_ids = line.available_product_document_ids
+
+        for line_data in result.get("lines", []):
+            line = self.order_line.filtered(lambda l: l.id == line_data["id"])
+            if line and line.product_document_ids:
+                for doc in line_data.get("files", []):
+                    if any(d.id == doc["id"] for d in line.product_document_ids):
+                        doc["is_selected"] = True
+        return result
+
+    def copy(self, default=None):
+        default = dict(default or {})
+        new_orders = super().copy(default)
+        bodies = {}
+        for old_order, new_order in zip(self, new_orders):
+            bodies[new_order.id] = (
+                "" if not old_order else _("This sale order was duplicated from %s", old_order._get_html_link())
+            )
+        new_orders._message_log_batch(bodies=bodies)
+        return new_orders
+
+    @api.depends("force_invoiced_status")
+    def _compute_amount_to_invoice(self):
+        remaining = self - self.filtered("force_invoiced_status")
+        (self - remaining).amount_to_invoice = 0.0
+        super(SaleOrder, remaining)._compute_amount_to_invoice()
+
+    def lock_sale_order(self):
+        self.ensure_one()
+        return self.locked
+
+    def _get_protected_fields(self):
+        """Give the fields that should not be modified on a SO.
+        :returns: list of field names
+        :rtype: list
+        """
+        return ["partner_id", "partner_invoice_id", "partner_shipping_id", "pricelist_id"]
+
+    def write(self, vals):
+        # Prevent writing on locked SOs.
+        protected_fields = self._get_protected_fields()
+        if any(order.lock_sale_order() for order in self) and any(f in vals for f in protected_fields):
+            protected_fields_modified = list(set(protected_fields) & set(vals.keys()))
+            fields = (
+                self.env["ir.model.fields"]
+                .sudo()
+                .search([("name", "in", protected_fields_modified), ("model", "=", self._name)])
+            )
+            if fields:
+                raise UserError(
+                    _(
+                        "It is forbidden to modify the following fields in a locked order:\n%s",
+                        "\n".join(fields.mapped("field_description")),
+                    )
+                )
+        return super().write(vals)

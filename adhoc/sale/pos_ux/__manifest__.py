@@ -1,0 +1,21 @@
+{
+    "name": "Point of Sale UX",
+    "version": "18.0.1.2.0",
+    "category": "Point of Sale",
+    "author": "ADHOC SA",
+    "depends": [
+        "point_of_sale",
+    ],
+    "data": [
+        "views/pos_session_view.xml",
+        "views/res_config_settings_view.xml",
+    ],
+    "assets": {
+        "point_of_sale._assets_pos": [
+            "pos_ux/static/src/**/*",
+        ],
+    },
+    "installable": True,
+    "auto_install": False,
+    "license": "LGPL-3",
+}
