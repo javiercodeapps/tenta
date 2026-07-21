@@ -8,4 +8,4 @@ pysimplesoap~=1.8.22
 # git+https://github.com/OCA/openupgradelib/@master
 # git+https://github.com/reingart/pyafipws@py3k
 # git+https://github.com/ingadhoc/pyafipws@py3k
-git+https://github.com/filoquin/pyafipws.git@py3k
+# git+https://github.com/filoquin/pyafipws.git@py3k
